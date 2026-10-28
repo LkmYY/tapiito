@@ -1,0 +1,172 @@
+services:
+  # 数据库服务：MySQL 8
+  db:
+    image: mysql:8.0
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --default-authentication-plugin=mysql_native_password
+      - --max-connections=500
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD:-root}
+      - MYSQL_DATABASE=${DB_NAME:-nfc}
+      - MYSQL_USER=${DB_USER:-nfc_user}
+      - MYSQL_PASSWORD=${DB_PASSWORD:-nfc_pass}
+    volumes:
+      - ./data/db:/var/lib/mysql
+    ports:
+      - "127.0.0.1:3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # 缓存 Redis：允许淘汰，丢了可从 MySQL 重建
+  redis-cache:
+    image: redis/redis-stack-server:latest
+    container_name: tapiito-redis-cache
+    command:
+      - redis-stack-server
+      - --maxmemory
+      - 512mb
+      - --maxmemory-policy
+      - allkeys-lru
+      - --save
+      - ""
+    ports:
+      - "127.0.0.1:6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # 控制 Redis：存 Bloom / 限流 / 黑名单，必须 noeviction + AOF
+  redis-control:
+    image: redis/redis-stack-server:latest
+    container_name: tapiito-redis-control
+    command:
+      - redis-stack-server
+      - --maxmemory
+      - 512mb
+      - --maxmemory-policy
+      - noeviction
+      - --appendonly
+      - "yes"
+      - --appendfsync
+      - everysec
+    ports:
+      - "127.0.0.1:6380:6379"
+    volumes:
+      - ./data/redis-control:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # Go 后端：双入口（:8080 公开 / :8081 管理）
+  api:
+    build: ./backend-go
+    environment:
+      - APP_ENV=${APP_ENV:-prod}
+      - PUBLIC_ADDR=:8080
+      - ADMIN_ADDR=:8081
+      - DB_DSN=${DB_USER:-nfc_user}:${DB_PASSWORD:-nfc_pass}@tcp(db:3306)/${DB_NAME:-nfc}?charset=utf8mb4&parseTime=true&loc=Local
+      - DB_MAX_OPEN_CONNS=${DB_MAX_OPEN_CONNS:-100}
+      - DB_READ_CONCURRENCY=${DB_READ_CONCURRENCY:-80}
+      - DB_WRITE_CONCURRENCY=${DB_WRITE_CONCURRENCY:-20}
+      - REDIS_CACHE_ADDR=redis-cache:6379
+      - REDIS_CONTROL_ADDR=redis-control:6379
+      - JWT_SECRET=${JWT_SECRET:?JWT_SECRET 必须显式设置}
+      - JWT_ACCESS_TOKEN_EXPIRE_MINUTES=${JWT_ACCESS_TOKEN_EXPIRE_MINUTES:-60}
+      - RL_GLOBAL_QPS=${RL_GLOBAL_QPS:-400}
+      - RL_PUBLIC_READ_RPS=${RL_PUBLIC_READ_RPS:-10}
+      - RL_PUBLIC_WRITE_RPS=${RL_PUBLIC_WRITE_RPS:-2}
+      - OSS_ENABLE=${OSS_ENABLE:-0}
+      - OSS_ENDPOINT=${OSS_ENDPOINT}
+      - OSS_ACCESS_KEY_ID=${OSS_ACCESS_KEY_ID}
+      - OSS_ACCESS_KEY_SECRET=${OSS_ACCESS_KEY_SECRET}
+      - OSS_BUCKET_NAME=${OSS_BUCKET_NAME}
+      - TWILIO_ACCOUNT_SID=${TWILIO_ACCOUNT_SID}
+      - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}
+      - TWILIO_PHONE_NUMBER=${TWILIO_PHONE_NUMBER}
+      - PUBLIC_BASE_URL=${PUBLIC_BASE_URL}
+      - UPLOAD_DIR=/data/uploads
+      - CORS_ORIGINS=${CORS_ORIGINS:-*}
+      - DEFAULT_ADMIN_USERNAME=${DEFAULT_ADMIN_USERNAME}
+      - DEFAULT_ADMIN_PASSWORD=${DEFAULT_ADMIN_PASSWORD:?DEFAULT_ADMIN_PASSWORD 必须显式设置}
+    volumes:
+      - ./data/uploads:/data/uploads
+    ports:
+      # 只绑回环：管理接口绝不能被公网直连，对外统一走 nginx
+      - "127.0.0.1:8080:8080"
+      - "127.0.0.1:8081:8081"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis-cache:
+        condition: service_healthy
+      redis-control:
+        condition: service_healthy
+    healthcheck:
+      # alpine 基础镜像自带 busybox wget
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:8080/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # 统计 worker：Redis Stream → MySQL 批量落库
+  worker:
+    build: ./backend-go
+    entrypoint: ["/app/worker"]
+    environment:
+      - APP_ENV=${APP_ENV:-prod}
+      - DB_DSN=${DB_USER:-nfc_user}:${DB_PASSWORD:-nfc_pass}@tcp(db:3306)/${DB_NAME:-nfc}?charset=utf8mb4&parseTime=true&loc=Local
+      - REDIS_CONTROL_ADDR=redis-control:6379
+      - JWT_SECRET=${JWT_SECRET:?JWT_SECRET 必须显式设置}
+      - DEFAULT_ADMIN_PASSWORD=${DEFAULT_ADMIN_PASSWORD:?DEFAULT_ADMIN_PASSWORD 必须显式设置}
+    depends_on:
+      db:
+        condition: service_healthy
+      redis-control:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # 前端构建服务（仅在 docker compose --profile build up 时启用；
+  # 生产环境用本地已构建的 frontend/dist，避免服务器上跑 npm install）
+  frontend-build:
+    profiles: ["build"]
+    image: node:18-alpine
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+      - frontend_node_modules:/app/node_modules
+    command: >
+      sh -c "npm install && npm run build"
+    environment:
+      - NODE_ENV=production
+
+  # 前端与反向代理
+  nginx:
+    image: nginx:alpine
+    depends_on:
+      - api
+    volumes:
+      - ./deploy/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./frontend/dist:/usr/share/nginx/html:ro
+      # Let's Encrypt 证书（certbot 续期后 restart nginx 容器即可生效）
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+    ports:
+      - "80:80"
+      - "443:443"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+volumes:
+  frontend_node_modules:
+  db_data:

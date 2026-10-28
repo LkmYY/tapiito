@@ -1,0 +1,18 @@
+[Unit]
+Description=Gitee Webhook Deployer
+After=network.target docker.service
+
+[Service]
+Type=simple
+WorkingDirectory=/root/nfc-manage
+EnvironmentFile=/root/nfc-manage/.env
+Environment=BRANCH=master
+Environment=REPO_DIR=/root/nfc-manage
+Environment=DEPLOY_SCRIPT=/root/nfc-manage/deploy/deploy.sh
+ExecStart=/usr/bin/uvicorn deploy.webhook_server:app --host 0.0.0.0 --port 9000
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target
+

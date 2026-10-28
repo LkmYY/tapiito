@@ -1,0 +1,36 @@
+# Node & 前端依赖与构建缓存
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+.DS_Store
+
+# Python 字节码缓存目录
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# 本地轻量数据库文件（开发环境使用）
+*.db
+nfc.db
+
+# 后端上传与日志目录（运行时生成，不应入库）
+backend/uploads/
+backend/logs/
+uploads/
+logs/
+
+# 本地宣传素材 / 工作区（不参与版本管理）
+.workbuddy/
+
+# 环境变量文件（包含密钥与敏感配置）
+.env
+
+# 备份副本，不入库
+- 副本.gitignore
+
+# 后端构建产物（本地编译生成，不入库）
+backend-go/bin/
+*.exe
+backend-go/*.exe
