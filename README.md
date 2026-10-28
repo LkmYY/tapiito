@@ -23,7 +23,6 @@
   <img src="docs/assets/demo.gif" width="340" alt="Tapiito 演示：碰一下，名片/菜单/求助信息就跳出来">
 </p>
 
-
 <p align="center">
   <a href="#快速开始"><b>快速开始</b></a> &nbsp;·&nbsp;
   <a href="#核心能力">核心能力</a> &nbsp;·&nbsp;
