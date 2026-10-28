@@ -1,5 +1,25 @@
 # Tapiito
 
+<p>
+  <img alt="Go" src="https://img.shields.io/badge/Go-1.22+-00ADD8?logo=go&logoColor=white">
+  <img alt="Vue" src="https://img.shields.io/badge/Vue-3-4FC08D?logo=vuedotjs&logoColor=white">
+  <img alt="Docker" src="https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white">
+  <img alt="License" src="https://img.shields.io/badge/License-个人免费·商用授权-orange">
+</p>
+
+**一张薄薄的 NFC 标签，碰一下，你的名片／菜单／求助信息就跳出来了。**
+
+不需要装 App，不需要电池，不需要对准二维码。9 种标签类型 × 30 种设计风格，
+内容随时可改，还能给每枚标签单独设置暗号保护或一次性链接。
+
+<p align="center">
+  <img src="frontend/public/showroom/business_card__blueprint.webp" width="200" alt="商务名片">
+  <img src="frontend/public/showroom/business_card__botanical.webp" width="200" alt="商务名片 · 植物">
+  <img src="frontend/public/showroom/business_card__brutal_pop.webp" width="200" alt="商务名片 · 野兽派">
+</p>
+
+---
+
 Tapiito 是一个以 NFC 标签为入口的数字信息展示平台。用户只需提供展示内容，由平台管理员创建并维护 NFC 页面；手机碰触标签后打开 `/p/{nfc_id}`，即可查看对应的数字名片、求助信息、企业官网、产品介绍等内容。
 
 平台不提供用户自助注册或用户端登录，所有标签、订单和展示内容统一由管理后台管理。
@@ -105,6 +125,34 @@ Tapiito 是一个以 NFC 标签为入口的数字信息展示平台。用户只�
 ```
 
 `frontend/dist/` 为构建产物，不纳入版本管理；Docker Compose 会在 `frontend-build` 服务中生成。
+
+## 快速开始
+
+```bash
+git clone git@github.com:LkmYY/tapiito.git
+cd tapiito
+
+# 复制环境变量模板，按需修改数据库密码 / JWT_SECRET / 管理员账号
+cp .env.example .env
+
+# 一条命令起全栈：nginx + api + worker + mysql + redis
+docker compose up -d --build
+
+# 建表
+docker compose exec -T db mysql -uroot -p"$DB_ROOT_PASSWORD" "$DB_NAME" < backend-go/migrations/000001_init.up.sql
+```
+
+启动后：
+
+| 地址 | 说明 |
+|---|---|
+| http://localhost | 前台首页 |
+| http://localhost/showroom | 模板展厅（300 套风格） |
+| http://localhost/admin | 管理后台 |
+| http://localhost:8081/healthz | 后端健康检查 |
+
+管理后台默认账号见 `.env` 里的 `DEFAULT_ADMIN_USER` / `DEFAULT_ADMIN_PASSWORD`，
+**首次登录后请立即修改**。
 
 ## 本地开发
 
@@ -280,4 +328,27 @@ Nginx 配置位于 `deploy/nginx.conf`：单域名下按「方法 + 路径」把
 
 ## License
 
-MIT
+本项目采用 **Tapiito License v1.0**：个人使用免费，商业使用需授权。
+
+| 场景 | 是否需要授权 |
+|---|---|
+| 个人自用、学习、研究、教学 | 免费，无需授权 |
+| 修改后用于自己的非商业项目 | 免费，无需授权 |
+| 企业内部经营性业务 | **需授权** |
+| 作为商品销售或提供付费服务 | **需授权** |
+| 集成进商业产品对外交付 | **需授权** |
+
+完整条款见 [LICENSE](LICENSE)。商业授权请开个 issue 说明场景。
+
+> 注意：这是「源码可见」许可，不是 OSI 定义的开源许可。
+> 你可以阅读、学习、在个人场景中使用，但商用需要我点头。
+
+## 支持这个项目
+
+如果 Tapiito 帮你省了时间，或者你想看到它继续维护，可以请我喝杯咖啡 ☕
+
+<p align="center">
+  <img src="docs/assets/donate.png" width="220" alt="赞赏码">
+</p>
+
+<p align="center"><sub>纯粹自愿，不影响任何功能与授权</sub></p>
