@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img src="frontend/public/tapiito-icon-ink.svg" width="54" alt="Tapiito"><br>
+  <img src="docs/assets/logo.svg" width="72" alt="Tapiito"><br>
   Tapiito
 </h1>
 
