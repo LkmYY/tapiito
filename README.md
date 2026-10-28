@@ -1,21 +1,39 @@
-# Tapiito
+<h1 align="center">
+  <img src="frontend/public/tapiito-icon-ink.svg" width="54" alt="Tapiito"><br>
+  Tapiito
+</h1>
 
-<p>
+<p align="center"><b>Tap it alive. 碰一下，它就活了。</b></p>
+
+<p align="center">
+  <sub>NFC 智能标签平台 · 9 种标签类型 × 30 种设计风格 · 免装 App · 免供电 · 内容随时可改</sub>
+</p>
+
+<p align="center">
+  <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/License-个人免费·商用授权-orange"></a>
   <img alt="Go" src="https://img.shields.io/badge/Go-1.22+-00ADD8?logo=go&logoColor=white">
   <img alt="Vue" src="https://img.shields.io/badge/Vue-3-4FC08D?logo=vuedotjs&logoColor=white">
   <img alt="Docker" src="https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white">
-  <img alt="License" src="https://img.shields.io/badge/License-个人免费·商用授权-orange">
+  <img alt="version" src="https://img.shields.io/badge/version-1.0.0-blue">
 </p>
 
-**一张薄薄的 NFC 标签，碰一下，你的名片／菜单／求助信息就跳出来了。**
-
-不需要装 App，不需要电池，不需要对准二维码。9 种标签类型 × 30 种设计风格，
-内容随时可改，还能给每枚标签单独设置暗号保护或一次性链接。
+<br>
 
 <p align="center">
-  <img src="frontend/public/showroom/business_card__blueprint.webp" width="200" alt="商务名片">
-  <img src="frontend/public/showroom/business_card__botanical.webp" width="200" alt="商务名片 · 植物">
-  <img src="frontend/public/showroom/business_card__brutal_pop.webp" width="200" alt="商务名片 · 野兽派">
+  <img src="frontend/public/showroom/business_card__blueprint.webp" width="258" alt="商务名片">
+  &nbsp;&nbsp;
+  <img src="frontend/public/showroom/nightclub__acid_house.webp" width="258" alt="夜店交际">
+</p>
+
+<p align="center">
+  <a href="#快速开始"><b>快速开始</b></a> &nbsp;·&nbsp;
+  <a href="#核心能力">核心能力</a> &nbsp;·&nbsp;
+  <a href="#模板体系">模板体系</a> &nbsp;·&nbsp;
+  <a href="#技术栈">技术栈</a> &nbsp;·&nbsp;
+  <a href="#目录结构">目录结构</a> &nbsp;·&nbsp;
+  <a href="#api-概览">API</a> &nbsp;·&nbsp;
+  <a href="#docker-部署">部署</a> &nbsp;·&nbsp;
+  <a href="#license">License</a>
 </p>
 
 ---
