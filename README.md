@@ -20,6 +20,10 @@
 <br>
 
 <p align="center">
+  <img src="docs/assets/demo.gif" width="340" alt="Tapiito 演示：碰一下，名片/菜单/求助信息就跳出来">
+</p>
+
+<p align="center">
   <img src="frontend/public/showroom/anime_card__pixel_quest.webp" width="120" alt=""><img src="frontend/public/showroom/business_card__liquid_gradient.webp" width="120" alt=""><img src="frontend/public/showroom/child_info__sticker_scrapbook.webp" width="120" alt=""><img src="frontend/public/showroom/company_website__risograph_press.webp" width="120" alt=""><img src="frontend/public/showroom/custom__neon_studio.webp" width="120" alt=""><br>
   <img src="frontend/public/showroom/emergency_contact__vhs_emergency.webp" width="120" alt=""><img src="frontend/public/showroom/nightclub__backstage_pass.webp" width="120" alt=""><img src="frontend/public/showroom/pet_tag__quiet_white.webp" width="120" alt=""><img src="frontend/public/showroom/product_display__riso_print.webp" width="120" alt=""><img src="frontend/public/showroom/recipe__cyber_canteen.webp" width="120" alt=""><br>
   <img src="frontend/public/showroom/weird__broken_clock.webp" width="120" alt=""><img src="frontend/public/showroom/anime_card__manga_panel.webp" width="120" alt=""><img src="frontend/public/showroom/business_card__minimal.webp" width="120" alt=""><img src="frontend/public/showroom/child_info__default.webp" width="120" alt=""><img src="frontend/public/showroom/company_website__tech.webp" width="120" alt=""><br>
