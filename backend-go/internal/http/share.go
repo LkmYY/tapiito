@@ -170,6 +170,12 @@ func replaceMeta(tmpl, title, desc, image, path string) string {
 	out = replaceAttr(out, `property="og:image"`, "content", image)
 	out = replaceAttr(out, `property="og:url"`, "content", "https://tapiito.com"+path)
 
+	// 微信部分版本优先读 link rel="image_src"，两个都给上
+	if !strings.Contains(out, `rel="image_src"`) {
+		link := `<link rel="image_src" href="` + image + `">`
+		out = strings.Replace(out, "</head>", link+"</head>", 1)
+	}
+
 	// 没有 og:image 就补一个（很多页面模板里没写）
 	if !strings.Contains(out, `property="og:image"`) {
 		inject := `<meta property="og:image" content="` + image + `">` +
