@@ -3,6 +3,7 @@ package httpapi
 import (
 	"log/slog"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 
@@ -30,6 +31,15 @@ type Deps struct {
 // 只注册公开读、公开写（留言/照片/短信/下单/反馈）与展厅/落地页，绝不注册管理能力。
 func NewPublicRouter(d Deps) *gin.Engine {
 	r := gin.New()
+
+	// 分享卡片：SPA 的 index.html 里 meta 是首页文案，
+	// 微信/QQ 抓取时不执行 JS，必须由服务端按实际页面替换。
+	share := NewShareHandler(
+		envOr("SHARE_INDEX_PATH", "/data/dist/index.html"),
+		envOr("SHARE_META_PATH", "/data/dist/share-meta.json"),
+	)
+	r.GET("/share/preview", share.Preview)
+
 	r.Use(gin.Recovery(), RequestID(), RealIP(), SecurityHeaders(),
 		CORSMiddleware(d.Cfg.CORSOrigins), BlacklistGuard(d.Blacklist, d.Log))
 
@@ -114,3 +124,11 @@ func NewAdminRouter(d Deps) *gin.Engine {
 
 // NotFound 是统一的 404 响应，保持 FastAPI 的 detail 结构。
 func NotFound(c *gin.Context) { c.JSON(http.StatusNotFound, gin.H{"detail": "Not Found"}) }
+
+// envOr 读取环境变量，为空时返回默认值。
+func envOr(key, def string) string {
+	if v := os.Getenv(key); v != "" {
+		return v
+	}
+	return def
+}

@@ -1,0 +1,85 @@
+{
+  "types": {
+    "business_card": "名片",
+    "child_info": "求助信息卡",
+    "emergency_contact": "紧急联系人",
+    "company_website": "企业官网",
+    "product_display": "产品展示",
+    "recipe": "菜谱",
+    "custom": "自定义企业",
+    "nightclub": "夜店交际",
+    "anime_card": "二次元闪卡",
+    "pet_tag": "宠物铭牌",
+    "weird": "奇怪的想法"
+  },
+  "styles": {
+    "business_card": {
+      "": "经典商务",
+      "modern": "现代简约",
+      "creative": "创意撞色",
+      "minimal": "极简黑白",
+      "corporate": "企业品牌"
+    },
+    "child_info": {
+      "": "天空蓝",
+      "cartoon": "卡通趣味",
+      "nature": "自然清新",
+      "warm": "暖阳橙",
+      "starry": "星空梦幻"
+    },
+    "emergency_contact": {
+      "": "红色警告",
+      "medical": "医疗专业",
+      "sos": "SOS 高对比",
+      "family": "家庭温馨",
+      "pet": "宠物专用"
+    },
+    "company_website": {
+      "": "经典企业",
+      "tech": "科技风",
+      "elegant": "典雅商务",
+      "vibrant": "活力多彩",
+      "fullpage": "全屏叙事"
+    },
+    "product_display": {
+      "": "标准白底",
+      "premium": "奢华暗金",
+      "showcase": "画廊展示",
+      "comparison": "对比型",
+      "story": "故事叙述"
+    },
+    "recipe": {
+      "": "街边小馆",
+      "chalk": "黑板粉笔",
+      "night_market": "夜市烟火",
+      "breakfast": "清晨早点",
+      "fine_dining": "精致餐厅"
+    },
+    "custom": {
+      "custom_company": "企业服务",
+      "sparkles": "闪光",
+      "cake": "蛋糕",
+      "gift": "礼物",
+      "truck": "配送",
+      "heart": "爱心",
+      "camera": "摄影",
+      "scissors": "剪刀",
+      "wrench": "维修",
+      "leaf": "植物",
+      "coffee": "咖啡",
+      "star": "星标",
+      "users": "团队",
+      "restaurant": "餐饮美食",
+      "salon": "美业沙龙",
+      "fitness": "健身运动",
+      "education": "教育培训"
+    },
+    "pet_tag": {
+      "1": "很慢",
+      "2": "慢",
+      "3": "正常",
+      "4": "快",
+      "5": "很快"
+    }
+  }
+}

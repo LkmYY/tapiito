@@ -94,11 +94,15 @@ services:
       - TWILIO_PHONE_NUMBER=${TWILIO_PHONE_NUMBER}
       - PUBLIC_BASE_URL=${PUBLIC_BASE_URL}
       - UPLOAD_DIR=/data/uploads
+      # 分享卡片需要读取 index.html 做 meta 替换
+      - SHARE_INDEX_PATH=/data/dist/index.html
+      - SHARE_META_PATH=/data/dist/share-meta.json
       - CORS_ORIGINS=${CORS_ORIGINS:-*}
       - DEFAULT_ADMIN_USERNAME=${DEFAULT_ADMIN_USERNAME}
       - DEFAULT_ADMIN_PASSWORD=${DEFAULT_ADMIN_PASSWORD:?DEFAULT_ADMIN_PASSWORD 必须显式设置}
     volumes:
       - ./data/uploads:/data/uploads
+      - ./frontend/dist:/data/dist:ro
     ports:
       # 只绑回环：管理接口绝不能被公网直连，对外统一走 nginx
       - "127.0.0.1:8080:8080"
