@@ -170,7 +170,7 @@
                   :title="s.label"
                 >
                   <img
-                    :src="`/showroom/thumbs/${t.key}__${s.value}.jpg`"
+                    :src="thumbOf(t, s)"
                     alt=""
                     width="116"
                     height="164"
@@ -260,6 +260,13 @@ import {
 } from 'lucide-vue-next'
 import { templateTypes, visibleTypeOrder } from '../templates/registry.js'
 import SiteHeader from '../components/SiteHeader.vue'
+
+/** 默认风格（value 为空）没有截图文件，复用该类型第一个有名字的风格，避免 404 */
+const thumbOf = (t, s) => {
+  const v = s.value || (t.styles.find((x) => x.value)?.value ?? '')
+  return v ? `/showroom/thumbs/${t.key}__${v}.jpg` : ''
+}
+
 
 /** 每种类型的定位说明与 bento 跨列规则 */
 const TYPE_META = {

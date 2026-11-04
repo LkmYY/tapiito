@@ -94,10 +94,14 @@ const allCards = computed(() => {
   const out = []
   for (const key of visibleTypeOrder) {
     const t = templateTypes[key]
+    // 默认风格（value 为 ''）在 showroom 目录下没有截图文件，
+    // 缩略图回退到该类型第一个有名字的风格，避免 404
+    const firstNamed = t.styles.find((x) => x.value)?.value || ''
     for (const s of t.styles) {
       out.push({
         type: key,
-        style: s.value || 'default',
+        style: s.value || '',
+        thumbStyle: s.value || firstNamed,
         key: key + '__' + (s.value || 'default'),
         label: s.label || '默认',
         gradient: s.gradient || '',
@@ -119,12 +123,13 @@ const visibleCards = computed(() =>
   activeType.value ? allCards.value.filter((c) => c.type === activeType.value) : allCards.value
 )
 
-const imgUrl = (c) => `/showroom/${c.type}__${c.style}.webp`
+const imgUrl = (c) => (c.thumbStyle ? `/showroom/${c.type}__${c.thumbStyle}.webp` : '')
 /** 横屏类型需要特殊图片适配 */
 const isWide = (c) => templateTypes[c.type]?.layout === 'landscape'
 
+// 默认风格 style 为空，不带 style 参数即可
 const previewUrl = (c) =>
-  c.style === 'default' ? `/preview?type=${c.type}` : `/preview?type=${c.type}&style=${c.style}`
+  c.style ? `/preview?type=${c.type}&style=${c.style}` : `/preview?type=${c.type}`
 </script>
 
 <style scoped>
